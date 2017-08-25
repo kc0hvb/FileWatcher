@@ -17,12 +17,23 @@ namespace FileWatcher
             InitializeComponent();
         }
 
+        public void OnDebug()
+        {
+            OnStart(null);
+        }
+
         protected override void OnStart(string[] args)
         {
+            try
+            {
+                System.IO.File.Create(AppDomain.CurrentDomain.BaseDirectory + "OnStart.txt");
+            }
+            catch (Exception e) { }                      
         }
 
         protected override void OnStop()
         {
+
         }
     }
 }
