@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Configuration;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -26,14 +27,24 @@ namespace FileWatcher
         {
             try
             {
-                System.IO.File.Create(AppDomain.CurrentDomain.BaseDirectory + "OnStart.txt");
+                string sSource = ConfigurationManager.AppSettings["PAK_Location"];
+
             }
-            catch (Exception e) { }                      
+            catch (Exception ex)
+            {
+                System.IO.File.Create(AppDomain.CurrentDomain.BaseDirectory + $"Error Log {DateTime.Today}.txt");
+                using (System.IO.StreamWriter file =
+                new System.IO.StreamWriter(AppDomain.CurrentDomain.BaseDirectory + $"Error Log {DateTime.Today}.txt"))
+                {
+                    file.WriteLine(ex);
+                }
+            }
+                                  
         }
 
         protected override void OnStop()
         {
-
+            this.Stop();
         }
     }
 }
