@@ -25,6 +25,23 @@ namespace FileWatcher
                 new Service1()
             };
             ServiceBase.Run(ServicesToRun);
+            ServiceController sc = new ServiceController();
+            if (sc.Status == ServiceControllerStatus.Stopped)
+            {
+                // Start the service if the current status is stopped.
+                try
+                {
+                    // Start the service, and wait until its status is "Running".
+                    sc.Start();
+                    sc.WaitForStatus(ServiceControllerStatus.Running);
+                    
+                }
+                catch (InvalidOperationException)
+                {
+                    Console.WriteLine("Could not start the Alerter service.");
+                }
+            }
+
 #endif
         }
     }

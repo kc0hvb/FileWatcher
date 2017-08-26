@@ -27,8 +27,11 @@ namespace FileWatcher
 
         protected override void OnStart(string[] args)
         {
+
+
             try
             {
+
                 while (true)
                 {
                     string sSource = ConfigurationManager.AppSettings["PAK_Location"];
@@ -77,12 +80,14 @@ namespace FileWatcher
                     file.WriteLine(ex);
                 }
             }
-                                  
+
         }
 
         protected override void OnStop()
         {
-            this.Stop();
+            base.OnStop();
+            CanShutdown = true;
         }
+
     }
 }

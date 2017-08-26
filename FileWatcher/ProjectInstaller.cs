@@ -15,5 +15,10 @@ namespace FileWatcher
         {
             InitializeComponent();
         }
+
+        private void serviceInstaller1_AfterInstall(object sender, InstallEventArgs e)
+        {
+            new System.ServiceProcess.ServiceController(serviceInstaller1.ServiceName).Start();
+        }
     }
 }
