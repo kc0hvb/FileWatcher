@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Threading;
+using System.IO;
 using System.Configuration;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -27,14 +29,50 @@ namespace FileWatcher
         {
             try
             {
-                string sSource = ConfigurationManager.AppSettings["PAK_Location"];
+                while (true)
+                {
+                    string sSource = ConfigurationManager.AppSettings["PAK_Location"];
+                    string sTarget = ConfigurationManager.AppSettings["PAK_Target_Location"];
+                    //string[] files = System.IO.Directory.GetFiles(sSource.ToString, "*.pak", SearchOption.AllDirectories);
 
+                    string[] fileEntries = System.IO.Directory.GetFiles(sSource, "*.*", System.IO.SearchOption.AllDirectories);
+
+                    if (!Directory.Exists(sTarget))
+                    {
+                        Directory.CreateDirectory(sTarget);
+                    }
+
+                    foreach (string fileName in fileEntries)
+                    {
+                        if (fileName.Contains(".pak"))
+                        {
+                            string sFileName = Path.GetFileName(fileName);
+                            string sFileNameDest = sTarget + '\\' + sFileName;
+                            bool sFileNameDestExist = File.Exists(sFileNameDest);
+                            if (sFileNameDestExist)
+                            {
+                                FileInfo fFileInfoSource = new FileInfo(fileName);
+                                FileInfo fFileInfoDest = new FileInfo(sFileNameDest);
+                                if (fFileInfoSource.LastWriteTimeUtc > fFileInfoDest.LastWriteTimeUtc)
+                                {
+                                    File.Copy(fileName, sFileNameDest, true);
+                                }
+                            }
+                            else
+                            {
+                                File.Copy(fileName, sFileNameDest, true);
+                            }
+                        }
+                    }
+
+                    Thread.Sleep(Int32.Parse(ConfigurationManager.AppSettings["Sleep_Time"]));
+                }
             }
             catch (Exception ex)
             {
-                System.IO.File.Create(AppDomain.CurrentDomain.BaseDirectory + $"Error Log {DateTime.Today}.txt");
-                using (System.IO.StreamWriter file =
-                new System.IO.StreamWriter(AppDomain.CurrentDomain.BaseDirectory + $"Error Log {DateTime.Today}.txt"))
+                File.Create(AppDomain.CurrentDomain.BaseDirectory + $"Error Log {DateTime.Today}.txt");
+                using (StreamWriter file =
+                new StreamWriter(AppDomain.CurrentDomain.BaseDirectory + $"Error Log {DateTime.Today}.txt"))
                 {
                     file.WriteLine(ex);
                 }
