@@ -18,7 +18,7 @@ namespace FileWatcher
 
         private void serviceInstaller1_AfterInstall(object sender, InstallEventArgs e)
         {
-            new System.ServiceProcess.ServiceController(serviceInstaller1.ServiceName).Start();
+        //    new System.ServiceProcess.ServiceController(serviceInstaller1.ServiceName).Start();
         }
     }
 }
